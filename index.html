@@ -1,405 +1,702 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Smart Parking System - Reserve parking spots at premium locations across India">
-  <meta name="theme-color" content="#0f766e">
-  <title>Smart Parking System - Book Your Spot</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Smart Parking System - premium booking interface for reserved parking in major cities" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Smart Parking System</title>
   <style>
-    * { box-sizing: border-box; }
-    
     :root {
+      --bg: #f4f7fb;
+      --bg-strong: #eaf3ff;
+      --panel: rgba(255, 255, 255, 0.88);
+      --panel-strong: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
       --primary: #0f766e;
-      --primary-light: #14b8a6;
-      --primary-dark: #0d5f5a;
+      --primary-2: #14b8a6;
+      --primary-soft: rgba(20, 184, 166, 0.12);
       --secondary: #f59e0b;
       --success: #10b981;
       --warning: #f97316;
       --danger: #ef4444;
-      --dark: #1e293b;
-      --light: #f8fafc;
-      --border: #e2e8f0;
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+      --nav: linear-gradient(135deg, #0f172a 0%, #0f766e 55%, #14b8a6 100%);
+      --highlight: linear-gradient(135deg, #14b8a6 0%, #0ea5e9 100%);
     }
-    
+
+    body.dark {
+      --bg: #020817;
+      --bg-strong: #0f172a;
+      --panel: rgba(15, 23, 42, 0.8);
+      --panel-strong: #111827;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --primary: #2dd4bf;
+      --primary-2: #5eead4;
+      --primary-soft: rgba(45, 212, 191, 0.15);
+      --secondary: #fbbf24;
+      --success: #34d399;
+      --warning: #fb923c;
+      --danger: #f87171;
+      --border: rgba(148, 163, 184, 0.18);
+      --shadow: 0 18px 50px rgba(2, 6, 23, 0.7);
+      --nav: linear-gradient(135deg, #020817 0%, #0f172a 45%, #134e4a 100%);
+      --highlight: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
-      color: var(--dark);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(20,184,166,0.18), transparent 20%),
+        radial-gradient(circle at top right, rgba(59,130,246,0.18), transparent 25%),
+        var(--bg);
+      color: var(--text);
+      transition: background 0.25s ease, color 0.25s ease;
       min-height: 100vh;
     }
-    
+
+    a { color: inherit; text-decoration: none; }
+
+    button, input {
+      font: inherit;
+    }
+
     header {
-      padding: 20px 7%;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--nav);
       color: white;
+      box-shadow: 0 10px 30px rgba(15, 118, 110, 0.25);
+    }
+
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 10px 30px rgba(15, 118, 110, 0.3);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      padding: 18px 24px;
+      gap: 16px;
     }
-    
-    header h1 { 
-      margin: 0; 
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02rem;
+      font-size: 1.2rem;
     }
-    
-    .user-info {
+
+    .logo-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      font-size: 1.3rem;
+    }
+
+    .nav-actions {
       display: flex;
       align-items: center;
       gap: 12px;
     }
-    
-    .user-badge {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 14px;
-      backdrop-filter: blur(10px);
+
+    .mode-toggle,
+    .secondary-btn,
+    .primary-btn,
+    .danger-btn,
+    .slot-btn,
+    .mini-btn {
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
     }
-    
-    main { 
-      max-width: 1200px; 
-      margin: 40px auto; 
-      padding: 0 20px;
+
+    .mode-toggle,
+    .secondary-btn,
+    .mini-btn {
+      background: rgba(255,255,255,0.12);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 10px 14px;
+      font-weight: 600;
     }
-    
-    .hero {
-      text-align: center;
-      margin-bottom: 50px;
-      animation: slideDown 0.6s ease-out;
+
+    .mode-toggle:hover,
+    .secondary-btn:hover,
+    .primary-btn:hover,
+    .danger-btn:hover,
+    .slot-btn:hover,
+    .mini-btn:hover {
+      transform: translateY(-1px);
     }
-    
-    .hero h2 {
-      font-size: 36px;
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+      color: white;
+      padding: 12px 18px;
+      font-weight: 700;
+      box-shadow: 0 8px 22px rgba(20, 184, 166, 0.25);
+    }
+
+    .secondary-btn {
+      background: rgba(148,163,184,0.12);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+      color: white;
+      padding: 10px 14px;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(239,68,68,0.25);
+    }
+
+    .dashboard-shell,
+    .login-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 24px 52px;
+    }
+
+    .login-shell {
+      display: grid;
+      place-items: center;
+      min-height: calc(100vh - 80px);
+    }
+
+    .login-card,
+    .panel,
+    .booking-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .login-card {
+      width: min(100%, 460px);
+      padding: 34px 28px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--primary-soft);
       color: var(--primary);
-      margin: 0 0 10px 0;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08rem;
+      margin-bottom: 18px;
+    }
+
+    .login-card h1,
+    .panel h2,
+    .booking-panel h2 {
+      margin: 0 0 12px;
+      letter-spacing: -0.04em;
+    }
+
+    .login-card h1 {
+      font-size: clamp(2rem, 4vw, 2.6rem);
+    }
+
+    .subtitle,
+    .subtle {
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .demo-box {
+      margin: 18px 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(251,191,36,0.2));
+      color: var(--secondary);
       font-weight: 700;
     }
-    
-    .hero p {
-      font-size: 18px;
-      color: #64748b;
-      margin: 0;
-    }
-    
-    .panel {
-      background: white;
-      padding: 32px;
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-      margin-bottom: 30px;
-      transition: all 0.3s ease;
-      animation: fadeIn 0.6s ease-out;
-    }
-    
-    .panel:hover {
-      box-shadow: 0 15px 50px rgba(15, 118, 110, 0.15);
-      transform: translateY(-2px);
-    }
-    
-    .panel h2 {
-      color: var(--primary);
-      margin-top: 0;
-      margin-bottom: 20px;
-      font-size: 24px;
-    }
-    
-    .login { 
-      max-width: 450px; 
-      margin: 60px auto;
-      padding: 40px !important;
-    }
-    
-    .login h2 {
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    
-    .login-subtitle {
-      text-align: center;
-      color: #64748b;
-      margin-bottom: 30px;
-      font-size: 15px;
-    }
-    
-    input, select {
-      width: 100%;
-      padding: 14px 16px;
-      margin: 10px 0;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      background: var(--light);
-    }
-    
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--primary-light);
-      background: white;
-      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
-    }
-    
-    button {
-      width: 100%;
-      padding: 14px 16px;
-      margin: 10px 0;
-      border: 0;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: 10px;
-      font-size: 15px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
-    }
-    
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
-    }
-    
-    button:active {
-      transform: translateY(0);
-    }
-    
-    button.secondary { 
-      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-      box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
-      width: auto;
-      padding: 10px 20px;
-    }
-    
-    button.secondary:hover {
-      box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
-    }
-    
-    .grid {
+
+    .login-form {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 24px;
+      gap: 14px;
+      margin-top: 18px;
     }
-    
-    .slot {
-      border: 2px solid var(--border);
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .field input {
+      width: 100%;
       border-radius: 14px;
-      padding: 22px;
-      background: var(--light);
-      transition: all 0.3s ease;
+      border: 1px solid var(--border);
+      background: rgba(148,163,184,0.06);
+      color: var(--text);
+      padding: 14px 15px;
+      outline: none;
+      transition: border 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .field input:focus {
+      border-color: rgba(20,184,166,0.85);
+      background: rgba(20,184,166,0.04);
+      box-shadow: 0 0 0 4px rgba(20,184,166,0.1);
+    }
+
+    .login-actions {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+      color: white;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(20,184,166,0.28);
+    }
+
+    .alert {
+      min-height: 22px;
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 0.92rem;
+      margin-top: 10px;
+    }
+
+    .hidden { display: none !important; }
+
+    .dashboard {
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero-bar {
+      background: linear-gradient(135deg, rgba(15,118,110,0.12), rgba(14,165,233,0.12));
+      padding: 22px 20px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-copy h2 {
+      margin: 0 0 6px;
+      font-size: clamp(2rem, 3vw, 2.6rem);
+    }
+
+    .hero-copy p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(15,118,110,0.08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
       position: relative;
       overflow: hidden;
+      border-radius: 22px;
+      padding: 22px 20px;
+      background: var(--panel-strong);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
     }
-    
-    .slot::before {
-      content: '';
+
+    .stat-card::before {
+      content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      inset: 0 auto auto 0;
+      width: 100%;
       height: 4px;
-      background: var(--primary);
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      background: var(--highlight);
     }
-    
-    .slot:hover {
-      border-color: var(--primary-light);
-      box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
-      transform: translateY(-4px);
-    }
-    
-    .slot:hover::before {
-      opacity: 1;
-    }
-    
-    .slot h3 { 
-      margin: 0 0 8px 0;
-      color: var(--dark);
-      font-size: 18px;
-    }
-    
-    .slot-id {
-      color: #94a3b8;
-      font-size: 13px;
-      margin: 8px 0 12px 0;
-    }
-    
-    .status { 
-      font-weight: 600;
-      font-size: 13px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      display: inline-block;
-      margin: 8px 0;
-    }
-    
-    .available { 
-      color: #065f46;
-      background: #d1fae5;
-    }
-    
-    .reserved { 
-      color: #7c2d12;
-      background: #fed7aa;
-    }
-    
-    .occupied { 
-      color: #7f1d1d;
-      background: #fee2e2;
-    }
-    
-    .slot-details {
-      margin: 12px 0;
-      font-size: 14px;
-      color: #64748b;
-    }
-    
-    .timer {
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--muted);
       font-weight: 700;
+    }
+
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: var(--primary-soft);
       color: var(--primary);
-      font-size: 16px;
+      font-size: 1.1rem;
     }
-    
-    .muted { 
-      color: #64748b; 
-      font-size: 14px;
-      margin: 12px 0;
+
+    .stat-number {
+      font-size: clamp(2rem, 3vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin: 0;
     }
-    
-    .hidden { display: none !important; }
-    
-    #message { 
+
+    .stat-sub {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .panel-header h2 {
+      font-size: clamp(1.4rem, 2vw, 2rem);
+      margin: 0;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1 1 260px;
+      min-width: 220px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(148,163,184,0.06);
+      color: var(--text);
+      padding: 12px 14px 12px 40px;
+      outline: none;
+    }
+
+    .search-wrap::before {
+      content: "🔎";
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.7;
+    }
+
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-pill {
+      background: rgba(148,163,184,0.08);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.18s ease;
+    }
+
+    .filter-pill.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      border-color: rgba(20,184,166,0.4);
+    }
+
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .slot-card {
+      border: 1px solid var(--border);
+      background: rgba(148,163,184,0.04);
+      border-radius: 20px;
+      padding: 18px;
+      display: grid;
+      gap: 14px;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .slot-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(20,184,166,0.45);
+      box-shadow: 0 20px 34px rgba(15,23,42,0.09);
+    }
+
+    .slot-card.available {
+      background: linear-gradient(180deg, rgba(16,185,129,0.04), rgba(148,163,184,0.02));
+    }
+
+    .slot-card.reserved {
+      background: linear-gradient(180deg, rgba(249,115,22,0.05), rgba(148,163,184,0.02));
+    }
+
+    .slot-card.occupied {
+      background: linear-gradient(180deg, rgba(239,68,68,0.04), rgba(148,163,184,0.02));
+    }
+
+    .slot-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 10px;
+    }
+
+    .slot-title {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+    }
+
+    .slot-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.01rem;
+      text-transform: uppercase;
+    }
+
+    .slot-card.available .slot-badge {
+      background: rgba(16,185,129,0.12);
+      color: var(--success);
+    }
+
+    .slot-card.reserved .slot-badge {
+      background: rgba(249,115,22,0.12);
+      color: var(--warning);
+    }
+
+    .slot-card.occupied .slot-badge {
+      background: rgba(239,68,68,0.12);
       color: var(--danger);
-      min-height: 20px;
-      margin: 12px 0;
-      font-weight: 500;
-      text-align: center;
     }
-    
-    .demo-badge {
-      background: linear-gradient(135deg, var(--secondary) 0%, #fbbf24 100%);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-block;
-      margin-bottom: 16px;
+
+    .slot-meta {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+      font-size: 0.96rem;
     }
-    
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 16px;
-      margin-bottom: 30px;
-    }
-    
-    .stat-card {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-      color: white;
-      padding: 20px;
+
+    .timer-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(15,118,110,0.06);
+      border: 1px solid rgba(15,118,110,0.12);
       border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.2);
-    }
-    
-    .stat-card h4 {
-      margin: 0 0 8px 0;
-      font-size: 14px;
-      opacity: 0.9;
-    }
-    
-    .stat-card .number {
-      font-size: 32px;
+      padding: 12px 14px;
       font-weight: 700;
-      margin: 0;
-    }
-    
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: #64748b;
-      border-top: 1px solid var(--border);
-      margin-top: 60px;
-    }
-    
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin: 30px 0;
-    }
-    
-    .feature {
-      padding: 20px;
-      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(15, 118, 110, 0.1) 100%);
-      border-radius: 12px;
-      border-left: 4px solid var(--primary-light);
-    }
-    
-    .feature h4 {
-      margin: 0 0 8px 0;
       color: var(--primary);
-      font-size: 16px;
     }
-    
-    .feature p {
-      margin: 0;
-      font-size: 14px;
-      color: #64748b;
+
+    .timer-box span:last-child {
+      font-variant-numeric: tabular-nums;
+      font-size: 1.02rem;
     }
-    
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+
+    .slot-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+
+    .slot-btn {
+      flex: 1 1 120px;
+      padding: 12px 14px;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-2) 100%);
+      box-shadow: 0 8px 18px rgba(20,184,166,0.18);
     }
-    
-    @media (max-width: 768px) {
-      header {
+
+    .slot-btn.ghost {
+      background: rgba(148,163,184,0.12);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .slot-btn.warning {
+      background: linear-gradient(135deg, var(--warning) 0%, #fb923c 100%);
+      box-shadow: 0 8px 18px rgba(249,115,22,0.18);
+    }
+
+    .slot-btn.danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #f87171 100%);
+      box-shadow: 0 8px 18px rgba(239,68,68,0.18);
+    }
+
+    .booking-panel {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(15,118,110,0.06), rgba(14,165,233,0.05));
+    }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .entry {
+      display: grid;
+      gap: 10px;
+    }
+
+    .entry label {
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .entry input, .entry select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(148,163,184,0.06);
+      color: var(--text);
+    }
+
+    .booking-list {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .booking-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.3);
+      flex-wrap: wrap;
+    }
+
+    .booking-item strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .bookings-empty {
+      color: var(--muted);
+      padding: 18px 14px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      text-align: center;
+      background: rgba(148,163,184,0.03);
+    }
+
+    footer {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 14px 24px 42px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .nav {
         flex-direction: column;
-        gap: 12px;
+        align-items: flex-start;
       }
-      
-      header h1 {
-        font-size: 22px;
+
+      .nav-actions {
+        width: 100%;
+        justify-content: space-between;
       }
-      
-      .hero h2 {
-        font-size: 26px;
+
+      .hero-bar {
+        padding: 18px 16px;
       }
-      
-      .login {
-        margin: 40px auto;
-        padding: 28px !important;
-      }
-      
-      .grid {
+
+      .slots-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -407,254 +704,553 @@
 </head>
 <body>
   <header>
-    <h1>🅿️ Smart Parking System</h1>
-    <div class="user-info" id="userInfo" style="display: none;">
-      <span class="user-badge">👤 <span id="username-display"></span></span>
-      <button id="logoutButton" class="secondary">Log out</button>
+    <div class="nav">
+      <div class="logo">
+        <div class="logo-mark">🅿️</div>
+        <span>Smart Parking System</span>
+      </div>
+      <div class="nav-actions">
+        <button id="themeToggle" class="mode-toggle" type="button" aria-label="Toggle dark mode">🌙 Dark</button>
+        <div id="userBadge" class="hidden chip">👤 <span id="userName">Admin</span></div>
+        <button id="logoutBtn" class="secondary-btn hidden" type="button">Log out</button>
+      </div>
     </div>
   </header>
 
   <main>
-    <section id="loginPage" class="panel login">
-      <h2>Welcome Back</h2>
-      <p class="login-subtitle">Sign in to reserve your parking spot</p>
-      <div class="demo-badge">🎮 DEMO MODE</div>
-      <form id="loginForm">
-        <input id="username" placeholder="Username" autocomplete="username" required>
-        <input id="password" type="password" placeholder="Password" autocomplete="current-password" required>
-        <button type="submit">Sign In</button>
-      </form>
-      <p id="message"></p>
-      <p class="muted" style="text-align: center;">Demo credentials: <strong>admin</strong> / <strong>1234</strong></p>
+    <section id="loginView" class="login-shell">
+      <div class="login-card">
+        <div class="eyebrow">Secure Access</div>
+        <h1>Reserve your spot</h1>
+        <p class="subtitle">Premium parking management for destination parking, fast check-ins, and stress-free arrivals.</p>
+        <div class="demo-box">🎮 Demo Access: admin / 1234</div>
+
+        <form id="loginForm" class="login-form">
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Enter username" autocomplete="username" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+
+          <div class="login-actions">
+            <button class="login-btn" type="submit">Sign In</button>
+          </div>
+        </form>
+
+        <div id="loginMessage" class="alert" aria-live="polite"></div>
+      </div>
     </section>
 
-    <section id="homePage" class="hidden">
-      <div class="hero">
-        <h2>Find Your Perfect Spot</h2>
-        <p>Premium parking locations across India • Real-time availability</p>
-      </div>
-      
-      <div id="statsContainer" class="stats">
-        <div class="stat-card">
-          <h4>Available</h4>
-          <p class="number" id="availableCount">0</p>
+    <section id="dashboardView" class="dashboard-shell hidden">
+      <div class="dashboard">
+        <div class="hero-bar">
+          <div class="hero-copy">
+            <h2>Parking dashboard</h2>
+            <p>Live availability tracking across iconic destinations.</p>
+          </div>
+          <div class="hero-meta">
+            <div class="chip">🕒 <span id="liveClock">--:--:--</span></div>
+            <div class="chip">📍 6 locations</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <h4>Reserved</h4>
-          <p class="number" id="reservedCount">0</p>
-        </div>
-        <div class="stat-card">
-          <h4>Occupied</h4>
-          <p class="number" id="occupiedCount">0</p>
-        </div>
-      </div>
 
-      <div class="panel">
-        <h2>🚗 Parking Locations</h2>
-        <p class="muted">📍 Reservations last for 2 hours. Select a slot to book now.</p>
-        <div id="slots" class="grid"></div>
-      </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Available</span>
+              <div class="stat-icon">✅</div>
+            </div>
+            <p id="availableCount" class="stat-number">0</p>
+            <div class="stat-sub">Ready for booking</div>
+          </div>
 
-      <div class="panel">
-        <h2>✨ Features</h2>
-        <div class="features">
-          <div class="feature">
-            <h4>Real-time Updates</h4>
-            <p>Live availability and sensor status</p>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Reserved</span>
+              <div class="stat-icon">⏳</div>
+            </div>
+            <p id="reservedCount" class="stat-number">0</p>
+            <div class="stat-sub">Waiting for arrival</div>
           </div>
-          <div class="feature">
-            <h4>2-Hour Reservations</h4>
-            <p>Flexible booking window for your convenience</p>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Occupied</span>
+              <div class="stat-icon">🚗</div>
+            </div>
+            <p id="occupiedCount" class="stat-number">0</p>
+            <div class="stat-sub">Vehicles detected</div>
           </div>
-          <div class="feature">
-            <h4>IR Sensor Integration</h4>
-            <p>Automatic detection when you arrive</p>
-          </div>
-          <div class="feature">
-            <h4>Premium Locations</h4>
-            <p>Book at India's most iconic spots</p>
+
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Occupancy</span>
+              <div class="stat-icon">📊</div>
+            </div>
+            <p id="occupancyPercent" class="stat-number">0%</p>
+            <div class="stat-sub">Usage across all slots</div>
           </div>
         </div>
-      </div>
 
-      <div class="panel">
-        <h2>📡 Sensor Connection</h2>
-        <p id="sensorInfo" class="muted">
-          ✅ Demo mode active: Click "Simulate IR sensor" to test car arrival detection.
-        </p>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Available Parking Spots</h2>
+            <button id="refreshBtn" class="secondary-btn" type="button">Refresh</button>
+          </div>
+
+          <div class="filter-bar">
+            <div class="search-wrap">
+              <input id="searchInput" type="text" placeholder="Search by location or slot" />
+            </div>
+
+            <div class="filter-pills" id="filterPills">
+              <button class="filter-pill active" data-filter="all" type="button">All</button>
+              <button class="filter-pill" data-filter="available" type="button">Available</button>
+              <button class="filter-pill" data-filter="reserved" type="button">Reserved</button>
+              <button class="filter-pill" data-filter="occupied" type="button">Occupied</button>
+            </div>
+          </div>
+
+          <div id="slotsGrid" class="slots-grid"></div>
+        </div>
+
+        <div class="booking-panel">
+          <h2>Book a parking session</h2>
+          <p class="subtle">Choose a destination and reservation window. Bookings are stored locally in this demo.</p>
+
+          <div class="booking-grid">
+            <div class="entry">
+              <label for="bookingPlace">Location</label>
+              <select id="bookingPlace">
+                <option value="Taj Mahal, Agra">Taj Mahal, Agra</option>
+                <option value="Gateway of India, Mumbai">Gateway of India, Mumbai</option>
+                <option value="India Gate, New Delhi">India Gate, New Delhi</option>
+                <option value="Mysore Palace, Mysuru">Mysore Palace, Mysuru</option>
+                <option value="Charminar, Hyderabad">Charminar, Hyderabad</option>
+                <option value="Marina Beach, Chennai">Marina Beach, Chennai</option>
+              </select>
+            </div>
+
+            <div class="entry">
+              <label for="bookingDuration">Duration</label>
+              <select id="bookingDuration">
+                <option value="30">30 minutes</option>
+                <option value="60">1 hour</option>
+                <option value="120" selected>2 hours</option>
+                <option value="180">3 hours</option>
+              </select>
+            </div>
+
+            <div class="entry">
+              <label for="bookingName">Guest name</label>
+              <input id="bookingName" type="text" placeholder="Enter guest name" />
+            </div>
+          </div>
+
+          <div style="margin-top: 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <button id="createBookingBtn" class="primary-btn" type="button">Create booking</button>
+            <button id="simulateArrivalBtn" class="secondary-btn" type="button">Simulate arrival</button>
+          </div>
+
+          <div class="booking-list" id="bookingList">
+            <div class="bookings-empty">No bookings yet. Create your first reservation.</div>
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>&copy; 2026 Smart Parking System. Powered by innovative IoT technology.</p>
+    © 2026 Smart Parking System • Built for premium city parking experiences.
   </footer>
 
   <script>
-    const parkingSlots = [
-      { id: "Taj-1", place: "Taj Mahal, Agra", state: "available" },
-      { id: "Gateway-1", place: "Gateway of India, Mumbai", state: "available" },
-      { id: "IndiaGate-1", place: "India Gate, New Delhi", state: "available" },
-      { id: "Mysore-1", place: "Mysore Palace, Mysuru", state: "available" },
-      { id: "Charminar-1", place: "Charminar, Hyderabad", state: "available" },
-      { id: "Marina-1", place: "Marina Beach, Chennai", state: "available" }
+    const STORAGE_KEY = "smartParkingState_v1";
+    const initialSlots = [
+      { id: "Taj-1", place: "Taj Mahal, Agra", city: "Agra", state: "available" },
+      { id: "Gateway-1", place: "Gateway of India, Mumbai", city: "Mumbai", state: "available" },
+      { id: "IndiaGate-1", place: "India Gate, New Delhi", city: "New Delhi", state: "available" },
+      { id: "Mysore-1", place: "Mysore Palace, Mysuru", city: "Mysuru", state: "available" },
+      { id: "Charminar-1", place: "Charminar, Hyderabad", city: "Hyderabad", state: "available" },
+      { id: "Marina-1", place: "Marina Beach, Chennai", city: "Chennai", state: "available" }
     ];
 
-    const loginPage = document.getElementById("loginPage");
-    const homePage = document.getElementById("homePage");
-    const logoutButton = document.getElementById("logoutButton");
-    const userInfo = document.getElementById("userInfo");
-    const usernameDisplay = document.getElementById("username-display");
-    const slotsElement = document.getElementById("slots");
-    let currentUser = null;
+    const state = {
+      currentUser: null,
+      activeFilter: "all",
+      searchTerm: "",
+      bookings: []
+    };
 
-    document.getElementById("loginForm").addEventListener("submit", event => {
-      event.preventDefault();
+    const loginView = document.getElementById("loginView");
+    const dashboardView = document.getElementById("dashboardView");
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const userBadge = document.getElementById("userBadge");
+    const userName = document.getElementById("userName");
+    const slotsGrid = document.getElementById("slotsGrid");
+    const liveClock = document.getElementById("liveClock");
+    const searchInput = document.getElementById("searchInput");
+    const bookingList = document.getElementById("bookingList");
 
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-
-      if (username === "admin" && password === "1234") {
-        currentUser = username;
-        usernameDisplay.textContent = username;
-        loginPage.classList.add("hidden");
-        homePage.classList.remove("hidden");
-        userInfo.style.display = "flex";
-        renderSlots();
-        updateStats();
-      } else {
-        document.getElementById("message").textContent =
-          "❌ Incorrect username or password. Try admin/1234";
+    function getStoredState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        return {
+          slots: structuredClone(initialSlots),
+          bookings: []
+        };
       }
-    });
+      try {
+        const parsed = JSON.parse(saved);
+        return {
+          slots: Array.isArray(parsed.slots) && parsed.slots.length ? parsed.slots : structuredClone(initialSlots),
+          bookings: Array.isArray(parsed.bookings) ? parsed.bookings : []
+        };
+      } catch (error) {
+        return {
+          slots: structuredClone(initialSlots),
+          bookings: []
+        };
+      }
+    }
 
-    logoutButton.addEventListener("click", () => {
-      currentUser = null;
-      homePage.classList.add("hidden");
-      loginPage.classList.remove("hidden");
-      userInfo.style.display = "none";
-      document.getElementById("username").value = "";
-      document.getElementById("password").value = "";
-      document.getElementById("message").textContent = "";
-    });
+    const persisted = getStoredState();
+    const parkingSlots = persisted.slots;
+    state.bookings = persisted.bookings;
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        slots: parkingSlots,
+        bookings: state.bookings
+      }));
+    }
+
+    function showLogin() {
+      loginView.classList.remove("hidden");
+      dashboardView.classList.add("hidden");
+      userBadge.classList.add("hidden");
+      logoutBtn.classList.add("hidden");
+    }
+
+    function showDashboard() {
+      loginView.classList.add("hidden");
+      dashboardView.classList.remove("hidden");
+      userBadge.classList.remove("hidden");
+      logoutBtn.classList.remove("hidden");
+      userName.textContent = state.currentUser || "Admin";
+      renderAll();
+    }
+
+    function updateClock() {
+      const now = new Date();
+      liveClock.textContent = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    }
 
     function updateStats() {
-      const available = parkingSlots.filter(s => s.state === "available").length;
-      const reserved = parkingSlots.filter(s => s.state === "reserved").length;
-      const occupied = parkingSlots.filter(s => s.state === "occupied").length;
-      
+      const available = parkingSlots.filter(slot => slot.state === "available").length;
+      const reserved = parkingSlots.filter(slot => slot.state === "reserved").length;
+      const occupied = parkingSlots.filter(slot => slot.state === "occupied").length;
+      const total = parkingSlots.length;
+
       document.getElementById("availableCount").textContent = available;
       document.getElementById("reservedCount").textContent = reserved;
       document.getElementById("occupiedCount").textContent = occupied;
-    }
-
-    function renderSlots() {
-      slotsElement.innerHTML = "";
-
-      parkingSlots.forEach(slot => {
-        const card = document.createElement("article");
-        card.className = "slot";
-
-        const statusClass = {
-          available: "available",
-          reserved: "reserved",
-          occupied: "occupied"
-        }[slot.state];
-
-        let details = "";
-        if (slot.state === "reserved" && slot.reservedUntil) {
-          details = `<p class="slot-details">⏱️ Time remaining: <span class="timer" id="timer-${slot.id}"></span></p>`;
-        } else if (slot.state === "occupied") {
-          details = `<p class="slot-details">✅ Car detected by IR sensor</p>`;
-        }
-
-        card.innerHTML = `
-          <h3>📍 ${slot.place}</h3>
-          <p class="slot-id">Slot ID: <strong>${slot.id}</strong></p>
-          <p class="status ${statusClass}>${statusText(slot.state)}</p>
-          ${details}
-          ${slot.state === "available"
-            ? `<button data-book="${slot.id}">Book for 2 hours</button>`
-            : ""}
-          ${slot.state === "reserved"
-            ? `<button data-simulate="${slot.id}">🔔 Simulate: Car Arrived</button>`
-            : ""}
-        `;
-        slotsElement.appendChild(card);
-      });
-
-      slotsElement.querySelectorAll("[data-book]").forEach(button => {
-        button.addEventListener("click", () => bookSlot(button.dataset.book));
-      });
-
-      slotsElement.querySelectorAll("[data-simulate]").forEach(button => {
-        button.addEventListener("click", () => {
-          onIrSensorUpdate(button.dataset.simulate, true);
-        });
-      });
-
-      updateTimers();
+      document.getElementById("occupancyPercent").textContent = `${Math.round((occupied / total) * 100)}%`;
     }
 
     function statusText(state) {
-      return {
-        available: "✅ Available",
-        reserved: "⏳ Reserved — Waiting",
-        occupied: "🚗 Booked — Occupied"
-      }[state];
+      const map = {
+        available: "Available",
+        reserved: "Reserved",
+        occupied: "Occupied"
+      };
+      return map[state] || "Unknown";
+    }
+
+    function formatTime(ms) {
+      if (!ms) return "--:--:--";
+      const totalSeconds = Math.max(0, Math.floor((ms - Date.now()) / 1000));
+      const hrs = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const mins = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const secs = String(totalSeconds % 60).padStart(2, "0");
+      return `${hrs}:${mins}:${secs}`;
+    }
+
+    function renderSlots() {
+      const term = state.searchTerm.trim().toLowerCase();
+      let data = parkingSlots.filter(slot => {
+        const matchesFilter = state.activeFilter === "all" || slot.state === state.activeFilter;
+        const haystack = `${slot.id} ${slot.place} ${slot.city}`.toLowerCase();
+        const matchesSearch = !term || haystack.includes(term);
+        return matchesFilter && matchesSearch;
+      });
+
+      if (!data.length) {
+        slotsGrid.innerHTML = `
+          <div class="bookings-empty" style="grid-column: 1 / -1;">
+            No parking slots match your current filters.
+          </div>
+        `;
+        return;
+      }
+
+      slotsGrid.innerHTML = data.map(slot => {
+        const remainingInfo = slot.state === "reserved" && slot.reservedUntil
+          ? `<div class="timer-box"><span>Time left</span><span id="timer-${slot.id}">${formatTime(slot.reservedUntil)}</span></div>`
+          : "";
+
+        const bookingButton = slot.state === "available"
+          ? `<button class="slot-btn" type="button" data-book="${slot.id}">Book now</button>`
+          : "";
+
+        const sensorButton = slot.state === "reserved"
+          ? `<button class="slot-btn warning" type="button" data-sensor="${slot.id}">Car arrived</button>`
+          : "";
+
+        const cancelButton = slot.state === "reserved" || slot.state === "occupied"
+          ? `<button class="slot-btn ghost" type="button" data-reset="${slot.id}">Reset</button>`
+          : "";
+
+        return `
+          <article class="slot-card ${slot.state}">
+            <div class="slot-head">
+              <div>
+                <h3 class="slot-title">${slot.place}</h3>
+                <p class="slot-meta">${slot.city} • ${slot.id}</p>
+              </div>
+              <span class="slot-badge">${statusText(slot.state)}</span>
+            </div>
+
+            <div class="slot-meta">
+              ${slot.state === "occupied" ? `Booked at: ${new Date(slot.bookedAt).toLocaleString()}` :
+                slot.state === "reserved" && slot.reservedUntil ? `Reservation ends: ${new Date(slot.reservedUntil).toLocaleString()}` :
+                "Open for advance booking"}
+            </div>
+
+            ${remainingInfo}
+
+            <div class="slot-actions">
+              ${bookingButton}
+              ${sensorButton}
+              ${cancelButton}
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      slotsGrid.querySelectorAll("[data-book]").forEach(button => {
+        button.addEventListener("click", () => bookSlot(button.dataset.book));
+      });
+
+      slotsGrid.querySelectorAll("[data-sensor]").forEach(button => {
+        button.addEventListener("click", () => simulateSensor(button.dataset.sensor, true));
+      });
+
+      slotsGrid.querySelectorAll("[data-reset]").forEach(button => {
+        button.addEventListener("click", () => resetSlot(button.dataset.reset));
+      });
+
+      updateTimerDisplays();
+    }
+
+    function updateTimerDisplays() {
+      parkingSlots.forEach(slot => {
+        if (slot.state !== "reserved" || !slot.reservedUntil) return;
+        const timerEl = document.getElementById(`timer-${slot.id}`);
+        if (!timerEl) return;
+
+        const remaining = slot.reservedUntil - Date.now();
+        if (remaining <= 0) {
+          slot.state = "available";
+          delete slot.reservedUntil;
+          saveState();
+          renderAll();
+          return;
+        }
+
+        timerEl.textContent = formatTime(slot.reservedUntil);
+      });
+    }
+
+    function renderBookings() {
+      if (!state.bookings.length) {
+        bookingList.innerHTML = '<div class="bookings-empty">No bookings yet. Create your first reservation.</div>';
+        return;
+      }
+
+      bookingList.innerHTML = state.bookings.map(booking => `
+        <div class="booking-item">
+          <div>
+            <strong>${booking.name}</strong>
+            <span>${booking.location}</span>
+          </div>
+          <div>
+            <span>${booking.duration} min • ${booking.status}</span>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function renderAll() {
+      updateStats();
+      renderSlots();
+      renderBookings();
     }
 
     function bookSlot(slotId) {
       const slot = parkingSlots.find(item => item.id === slotId);
       if (!slot || slot.state !== "available") return;
 
+      const bookingName = prompt("Guest name for this booking:", state.currentUser || "Guest");
+      if (bookingName === null) return;
+
       slot.state = "reserved";
       slot.reservedAt = Date.now();
-      slot.reservedUntil = Date.now() + 2 * 60 * 60 * 1000;
-      renderSlots();
-      updateStats();
+      slot.reservedUntil = Date.now() + (Number(document.getElementById("bookingDuration").value || 120) * 60 * 1000);
+      const location = slot.place;
+      state.bookings.unshift({
+        name: bookingName.trim() || "Guest",
+        location,
+        duration: Number(document.getElementById("bookingDuration").value || 120),
+        status: "Reserved"
+      });
+      saveState();
+      renderAll();
     }
 
-    function onIrSensorUpdate(slotId, carDetected) {
+    function simulateSensor(slotId, carDetected) {
       const slot = parkingSlots.find(item => item.id === slotId);
       if (!slot || slot.state !== "reserved") return;
 
       if (carDetected) {
         slot.state = "occupied";
         slot.bookedAt = Date.now();
-        renderSlots();
-        updateStats();
+        const booking = state.bookings.find(item => item.location === slot.place);
+        if (booking) booking.status = "Occupied";
+        saveState();
+        renderAll();
       }
     }
 
-    function updateTimers() {
-      parkingSlots.forEach(slot => {
-        if (slot.state !== "reserved" || !slot.reservedUntil) return;
-
-        const timer = document.getElementById(`timer-${slot.id}`);
-        if (!timer) return;
-
-        const remaining = slot.reservedUntil - Date.now();
-        if (remaining <= 0) {
-          slot.state = "available";
-          delete slot.reservedAt;
-          delete slot.reservedUntil;
-          renderSlots();
-          updateStats();
-          return;
-        }
-
-        const hours = Math.floor(remaining / 3600000);
-        const minutes = Math.floor((remaining % 3600000) / 60000);
-        const seconds = Math.floor((remaining % 60000) / 1000);
-        timer.textContent =
-          `${String(hours).padStart(2, "0")}:` +
-          `${String(minutes).padStart(2, "0")}:` +
-          `${String(seconds).padStart(2, "0")}`;
-      });
+    function resetSlot(slotId) {
+      const slot = parkingSlots.find(item => item.id === slotId);
+      if (!slot) return;
+      slot.state = "available";
+      delete slot.reservedAt;
+      delete slot.reservedUntil;
+      delete slot.bookedAt;
+      saveState();
+      renderAll();
     }
 
-    setInterval(updateTimers, 1000);
+    function createManualBooking() {
+      const place = document.getElementById("bookingPlace").value;
+      const duration = Number(document.getElementById("bookingDuration").value || 120);
+      const name = document.getElementById("bookingName").value.trim() || "Guest";
+      const targetSlot = parkingSlots.find(slot => slot.place === place && slot.state === "available");
+
+      if (!targetSlot) {
+        alert("Selected location is fully occupied. Please choose another slot.");
+        return;
+      }
+
+      targetSlot.state = "reserved";
+      targetSlot.reservedAt = Date.now();
+      targetSlot.reservedUntil = Date.now() + duration * 60 * 1000;
+
+      state.bookings.unshift({
+        name,
+        location: place,
+        duration,
+        status: "Reserved"
+      });
+
+      saveState();
+      renderAll();
+      document.getElementById("bookingName").value = "";
+      document.getElementById("bookingPlace").value = place;
+    }
+
+    function simulateArrivalFromSelection() {
+      const place = document.getElementById("bookingPlace").value;
+      const targetSlot = parkingSlots.find(slot => slot.place === place && slot.state === "reserved");
+      if (!targetSlot) {
+        alert("No reserved slot is available at this location to simulate arrival.");
+        return;
+      }
+      simulateSensor(targetSlot.id, true);
+    }
+
+    loginForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (username === "admin" && password === "1234") {
+        state.currentUser = username;
+        loginMessage.textContent = "";
+        showDashboard();
+      } else {
+        loginMessage.textContent = "Incorrect username or password. Try admin / 1234.";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      state.currentUser = null;
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      showLogin();
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", renderAll);
+    document.getElementById("createBookingBtn").addEventListener("click", createManualBooking);
+    document.getElementById("simulateArrivalBtn").addEventListener("click", simulateArrivalFromSelection);
+
+    searchInput.addEventListener("input", (event) => {
+      state.searchTerm = event.target.value;
+      renderSlots();
+    });
+
+    document.querySelectorAll(".filter-pill").forEach(button => {
+      button.addEventListener("click", () => {
+        state.activeFilter = button.dataset.filter;
+        document.querySelectorAll(".filter-pill").forEach(item => item.classList.toggle("active", item === button));
+        renderSlots();
+      });
+    });
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const icon = document.getElementById("themeToggle");
+      icon.textContent = document.body.classList.contains("dark") ? "☀️ Light" : "🌙 Dark";
+      localStorage.setItem("parkingTheme", document.body.classList.contains("dark") ? "dark" : "light");
+    });
+
+    function initializeTheme() {
+      const savedTheme = localStorage.getItem("parkingTheme");
+      if (savedTheme === "dark") {
+        document.body.classList.add("dark");
+        document.getElementById("themeToggle").textContent = "☀️ Light";
+      }
+    }
+
+    setInterval(() => {
+      updateClock();
+      if (dashboardView.classList.contains("hidden") === false) {
+        updateTimerDisplays();
+      }
+    }, 1000);
+
+    initializeTheme();
+    updateClock();
+    renderAll();
+    showLogin();
   </script>
 </body>
 </html>
