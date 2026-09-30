@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Parking System - Reserve parking spots at premium locations across India">
+  <meta name="theme-color" content="#0f766e">
+  <title>Smart Parking System - Book Your Spot</title>
+  <style>
+    * { box-sizing: border-box; }
+    
+    :root {
+      --primary: #0f766e;
+      --primary-light: #14b8a6;
+      --primary-dark: #0d5f5a;
+      --secondary: #f59e0b;
+      --success: #10b981;
+      --warning: #f97316;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+    
+    header {
+      padding: 20px 7%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(15, 118, 110, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    header h1 { 
+      margin: 0; 
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .user-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      backdrop-filter: blur(10px);
+    }
+    
+    main { 
+      max-width: 1200px; 
+      margin: 40px auto; 
+      padding: 0 20px;
+    }
+    
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+      animation: slideDown 0.6s ease-out;
+    }
+    
+    .hero h2 {
+      font-size: 36px;
+      color: var(--primary);
+      margin: 0 0 10px 0;
+      font-weight: 700;
+    }
+    
+    .hero p {
+      font-size: 18px;
+      color: #64748b;
+      margin: 0;
+    }
+    
+    .panel {
+      background: white;
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+      transition: all 0.3s ease;
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    .panel:hover {
+      box-shadow: 0 15px 50px rgba(15, 118, 110, 0.15);
+      transform: translateY(-2px);
+    }
+    
+    .panel h2 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+    
+    .login { 
+      max-width: 450px; 
+      margin: 60px auto;
+      padding: 40px !important;
+    }
+    
+    .login h2 {
+      text-align: center;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .login-subtitle {
+      text-align: center;
+      color: #64748b;
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 10px 0;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: var(--light);
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+    }
+    
+    button {
+      width: 100%;
+      padding: 14px 16px;
+      margin: 10px 0;
+      border: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.3);
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    button.secondary { 
+      background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+      box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
+      width: auto;
+      padding: 10px 20px;
+    }
+    
+    button.secondary:hover {
+      box-shadow: 0 6px 20px rgba(100, 116, 139, 0.4);
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    
+    .slot {
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      background: var(--light);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .slot::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--primary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .slot:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 8px 24px rgba(15, 118, 110, 0.12);
+      transform: translateY(-4px);
+    }
+    
+    .slot:hover::before {
+      opacity: 1;
+    }
+    
+    .slot h3 { 
+      margin: 0 0 8px 0;
+      color: var(--dark);
+      font-size: 18px;
+    }
+    
+    .slot-id {
+      color: #94a3b8;
+      font-size: 13px;
+      margin: 8px 0 12px 0;
+    }
+    
+    .status { 
+      font-weight: 600;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      display: inline-block;
+      margin: 8px 0;
+    }
+    
+    .available { 
+      color: #065f46;
+      background: #d1fae5;
+    }
+    
+    .reserved { 
+      color: #7c2d12;
+      background: #fed7aa;
+    }
+    
+    .occupied { 
+      color: #7f1d1d;
+      background: #fee2e2;
+    }
+    
+    .slot-details {
+      margin: 12px 0;
+      font-size: 14px;
+      color: #64748b;
+    }
+    
+    .timer {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 16px;
+    }
+    
+    .muted { 
+      color: #64748b; 
+      font-size: 14px;
+      margin: 12px 0;
+    }
+    
+    .hidden { display: none !important; }
+    
+    #message { 
+      color: var(--danger);
+      min-height: 20px;
+      margin: 12px 0;
+      font-weight: 500;
+      text-align: center;
+    }
+    
+    .demo-badge {
+      background: linear-gradient(135deg, var(--secondary) 0%, #fbbf24 100%);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(15, 118, 110, 0.2);
+    }
+    
+    .stat-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .stat-card .number {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: #64748b;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .feature {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(15, 118, 110, 0.1) 100%);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary-light);
+    }
+    
+    .feature h4 {
+      margin: 0 0 8px 0;
+      color: var(--primary);
+      font-size: 16px;
+    }
+    
+    .feature p {
+      margin: 0;
+      font-size: 14px;
+      color: #64748b;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      header h1 {
+        font-size: 22px;
+      }
+      
+      .hero h2 {
+        font-size: 26px;
+      }
+      
+      .login {
+        margin: 40px auto;
+        padding: 28px !important;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🅿️ Smart Parking System</h1>
+    <div class="user-info" id="userInfo" style="display: none;">
+      <span class="user-badge">👤 <span id="username-display"></span></span>
+      <button id="logoutButton" class="secondary">Log out</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="loginPage" class="panel login">
+      <h2>Welcome Back</h2>
+      <p class="login-subtitle">Sign in to reserve your parking spot</p>
+      <div class="demo-badge">🎮 DEMO MODE</div>
+      <form id="loginForm">
+        <input id="username" placeholder="Username" autocomplete="username" required>
+        <input id="password" type="password" placeholder="Password" autocomplete="current-password" required>
+        <button type="submit">Sign In</button>
+      </form>
+      <p id="message"></p>
+      <p class="muted" style="text-align: center;">Demo credentials: <strong>admin</strong> / <strong>1234</strong></p>
+    </section>
+
+    <section id="homePage" class="hidden">
+      <div class="hero">
+        <h2>Find Your Perfect Spot</h2>
+        <p>Premium parking locations across India • Real-time availability</p>
+      </div>
+      
+      <div id="statsContainer" class="stats">
+        <div class="stat-card">
+          <h4>Available</h4>
+          <p class="number" id="availableCount">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Reserved</h4>
+          <p class="number" id="reservedCount">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Occupied</h4>
+          <p class="number" id="occupiedCount">0</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>🚗 Parking Locations</h2>
+        <p class="muted">📍 Reservations last for 2 hours. Select a slot to book now.</p>
+        <div id="slots" class="grid"></div>
+      </div>
+
+      <div class="panel">
+        <h2>✨ Features</h2>
+        <div class="features">
+          <div class="feature">
+            <h4>Real-time Updates</h4>
+            <p>Live availability and sensor status</p>
+          </div>
+          <div class="feature">
+            <h4>2-Hour Reservations</h4>
+            <p>Flexible booking window for your convenience</p>
+          </div>
+          <div class="feature">
+            <h4>IR Sensor Integration</h4>
+            <p>Automatic detection when you arrive</p>
+          </div>
+          <div class="feature">
+            <h4>Premium Locations</h4>
+            <p>Book at India's most iconic spots</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>📡 Sensor Connection</h2>
+        <p id="sensorInfo" class="muted">
+          ✅ Demo mode active: Click "Simulate IR sensor" to test car arrival detection.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Smart Parking System. Powered by innovative IoT technology.</p>
+  </footer>
+
+  <script>
+    const parkingSlots = [
+      { id: "Taj-1", place: "Taj Mahal, Agra", state: "available" },
+      { id: "Gateway-1", place: "Gateway of India, Mumbai", state: "available" },
+      { id: "IndiaGate-1", place: "India Gate, New Delhi", state: "available" },
+      { id: "Mysore-1", place: "Mysore Palace, Mysuru", state: "available" },
+      { id: "Charminar-1", place: "Charminar, Hyderabad", state: "available" },
+      { id: "Marina-1", place: "Marina Beach, Chennai", state: "available" }
+    ];
+
+    const loginPage = document.getElementById("loginPage");
+    const homePage = document.getElementById("homePage");
+    const logoutButton = document.getElementById("logoutButton");
+    const userInfo = document.getElementById("userInfo");
+    const usernameDisplay = document.getElementById("username-display");
+    const slotsElement = document.getElementById("slots");
+    let currentUser = null;
+
+    document.getElementById("loginForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username === "admin" && password === "1234") {
+        currentUser = username;
+        usernameDisplay.textContent = username;
+        loginPage.classList.add("hidden");
+        homePage.classList.remove("hidden");
+        userInfo.style.display = "flex";
+        renderSlots();
+        updateStats();
+      } else {
+        document.getElementById("message").textContent =
+          "❌ Incorrect username or password. Try admin/1234";
+      }
+    });
+
+    logoutButton.addEventListener("click", () => {
+      currentUser = null;
+      homePage.classList.add("hidden");
+      loginPage.classList.remove("hidden");
+      userInfo.style.display = "none";
+      document.getElementById("username").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("message").textContent = "";
+    });
+
+    function updateStats() {
+      const available = parkingSlots.filter(s => s.state === "available").length;
+      const reserved = parkingSlots.filter(s => s.state === "reserved").length;
+      const occupied = parkingSlots.filter(s => s.state === "occupied").length;
+      
+      document.getElementById("availableCount").textContent = available;
+      document.getElementById("reservedCount").textContent = reserved;
+      document.getElementById("occupiedCount").textContent = occupied;
+    }
+
+    function renderSlots() {
+      slotsElement.innerHTML = "";
+
+      parkingSlots.forEach(slot => {
+        const card = document.createElement("article");
+        card.className = "slot";
+
+        const statusClass = {
+          available: "available",
+          reserved: "reserved",
+          occupied: "occupied"
+        }[slot.state];
+
+        let details = "";
+        if (slot.state === "reserved" && slot.reservedUntil) {
+          details = `<p class="slot-details">⏱️ Time remaining: <span class="timer" id="timer-${slot.id}"></span></p>`;
+        } else if (slot.state === "occupied") {
+          details = `<p class="slot-details">✅ Car detected by IR sensor</p>`;
+        }
+
+        card.innerHTML = `
+          <h3>📍 ${slot.place}</h3>
+          <p class="slot-id">Slot ID: <strong>${slot.id}</strong></p>
+          <p class="status ${statusClass}>${statusText(slot.state)}</p>
+          ${details}
+          ${slot.state === "available"
+            ? `<button data-book="${slot.id}">Book for 2 hours</button>`
+            : ""}
+          ${slot.state === "reserved"
+            ? `<button data-simulate="${slot.id}">🔔 Simulate: Car Arrived</button>`
+            : ""}
+        `;
+        slotsElement.appendChild(card);
+      });
+
+      slotsElement.querySelectorAll("[data-book]").forEach(button => {
+        button.addEventListener("click", () => bookSlot(button.dataset.book));
+      });
+
+      slotsElement.querySelectorAll("[data-simulate]").forEach(button => {
+        button.addEventListener("click", () => {
+          onIrSensorUpdate(button.dataset.simulate, true);
+        });
+      });
+
+      updateTimers();
+    }
+
+    function statusText(state) {
+      return {
+        available: "✅ Available",
+        reserved: "⏳ Reserved — Waiting",
+        occupied: "🚗 Booked — Occupied"
+      }[state];
+    }
+
+    function bookSlot(slotId) {
+      const slot = parkingSlots.find(item => item.id === slotId);
+      if (!slot || slot.state !== "available") return;
+
+      slot.state = "reserved";
+      slot.reservedAt = Date.now();
+      slot.reservedUntil = Date.now() + 2 * 60 * 60 * 1000;
+      renderSlots();
+      updateStats();
+    }
+
+    function onIrSensorUpdate(slotId, carDetected) {
+      const slot = parkingSlots.find(item => item.id === slotId);
+      if (!slot || slot.state !== "reserved") return;
+
+      if (carDetected) {
+        slot.state = "occupied";
+        slot.bookedAt = Date.now();
+        renderSlots();
+        updateStats();
+      }
+    }
+
+    function updateTimers() {
+      parkingSlots.forEach(slot => {
+        if (slot.state !== "reserved" || !slot.reservedUntil) return;
+
+        const timer = document.getElementById(`timer-${slot.id}`);
+        if (!timer) return;
+
+        const remaining = slot.reservedUntil - Date.now();
+        if (remaining <= 0) {
+          slot.state = "available";
+          delete slot.reservedAt;
+          delete slot.reservedUntil;
+          renderSlots();
+          updateStats();
+          return;
+        }
+
+        const hours = Math.floor(remaining / 3600000);
+        const minutes = Math.floor((remaining % 3600000) / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+        timer.textContent =
+          `${String(hours).padStart(2, "0")}:` +
+          `${String(minutes).padStart(2, "0")}:` +
+          `${String(seconds).padStart(2, "0")}`;
+      });
+    }
+
+    setInterval(updateTimers, 1000);
+  </script>
+</body>
+</html>
